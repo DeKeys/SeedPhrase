@@ -7,11 +7,7 @@
 
 import Foundation
 
-precedencegroup PowerPrecedence { higherThan: MultiplicationPrecedence }
-infix operator ^^ : PowerPrecedence
-func ^^ (radix: Int, power: Int) -> Int {
-    return Int(pow(Double(radix), Double(power)))
-}
+typealias Byte = UInt8
 
 // https://gist.github.com/pofat/6ae0c2626660741234f159c60f51af91
 extension Data {
