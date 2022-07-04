@@ -10,6 +10,6 @@ import Foundation
 typealias Phrase = [String]
 
 protocol SeedPhraseProtocol {
-    static func deriveFrom(_ data: Data?) -> Phrase
-    static func phraseToData(_ phrase: Phrase) -> Data?
+    static func derive(from data: Data?) throws -> Phrase
+    static func rawRepresentation(from phrase: Phrase) -> Data?
 }
