@@ -9,4 +9,10 @@ import Foundation
 
 enum SeedPhraseError: Error {
     case invalidLength
+    case invalidWord
+    case invalidChecksum
+}
+
+enum ByteArrayError: Error {
+    case invalidLength
 }
