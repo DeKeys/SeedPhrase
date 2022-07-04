@@ -7,6 +7,8 @@
 
 import Foundation
 
+typealias BitArray = [Bit]
+
 enum Bit {
     case zero, one
 }
