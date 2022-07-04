@@ -1,6 +1,11 @@
-public struct SeedPhrase {
-    public private(set) var text = "Hello, World!"
+import Foundation
 
-    public init() {
+public struct SeedPhrase: SeedPhraseProtocol {
+    static func phraseToData(_ phrase: Phrase) -> Data? {
+        
+    }
+    
+    static func deriveFrom(_ data: Data?) -> Phrase {
+        
     }
 }
