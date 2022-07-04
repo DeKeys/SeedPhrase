@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 func bin2dec(_ bits: [Bit]) -> Int {
     var res = 0
     let N = bits.count - 1

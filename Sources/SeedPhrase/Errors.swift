@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 enum SeedPhraseError: Error {
     case invalidLength
 }
