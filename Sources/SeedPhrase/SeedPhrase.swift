@@ -8,26 +8,27 @@ public struct SeedPhrase: SeedPhraseProtocol {
         
         for word in phrase {
             if let wordIndex = bip39.firstIndex(of: word) {
-                var binWordIndex = String(wordIndex, radix: 2)
-                for _ in 0..<(11 - binWordIndex.count) {
-                    binWordIndex = "0" + binWordIndex
-                }
-                resBits += binWordIndex.map { char in
-                    return char == "0" ? .zero : .one
-                }
+                resBits += BitArray(from: String(wordIndex, radix: 2), length: 11)
             } else {
                 throw SeedPhraseError.invalidWord
             }
         }
         
-        let entropy: BitArray = Array(resBits[0..<256])
-        var entropyBytes = [Byte]()
-        
-        for i in stride(from: 0, to: entropy.count, by: 8) {
-            entropyBytes.append(Byte(bin2dec(Array(entropy[i..<(i + 8)]))))
-        }
-        
+        let entropyBytes = try ByteArray(from: BitArray(resBits[0..<256]))
         let entropyData = Data(bytes: entropyBytes, count: entropyBytes.count)
+        
+        // Check if checksum is valid for this entropy
+        var hasher = SHA256()
+        hasher.update(data: entropyData)
+        
+        let checksumBytes = withUnsafeBytes(of: hasher.finalize().hashValue) { Data($0) }.bytes
+        let checksumBits = BitArray(from: checksumBytes)
+        
+        let length = resBits.count - 256
+       
+        if length > 0 && checksumBits[0..<length] != resBits[256..<resBits.count] {
+            throw SeedPhraseError.invalidChecksum
+        }
         
         return entropyData
     }
@@ -39,21 +40,13 @@ public struct SeedPhrase: SeedPhraseProtocol {
         }
         
         // Convert key to bits
-        var keyBits = BitArray()
-        
-        for byte in data.bytes {
-            keyBits += byte.bits
-        }
+        var keyBits = BitArray(from: data.bytes)
         
         // Create checksum and convert it to bits
         var hash = SHA256()
         hash.update(data: data)
         let checksumData: Data = withUnsafeBytes(of: hash.finalize().hashValue) { Data($0) }
-        var checksumBits = BitArray()
-        
-        for byte in checksumData.bytes {
-            checksumBits += byte.bits
-        }
+        let checksumBits = BitArray(from: checksumData.bytes)
         
         // Append 1 bit from checksum to key bits for every 32 bits of key
         let N = keyBits.count / 32
