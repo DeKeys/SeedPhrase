@@ -10,6 +10,7 @@ import Foundation
 func bin2dec(_ bits: [Bit]) -> Int {
     var res = 0
     let N = bits.count - 1
+    
     for i in stride(from: N, to: -1, by: -1) {
         switch bits[i] {
         case .zero:
@@ -18,5 +19,6 @@ func bin2dec(_ bits: [Bit]) -> Int {
             res += Int(pow(2.0, Double(N - i)))
         }
     }
+    
     return res
 }

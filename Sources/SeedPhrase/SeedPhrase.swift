@@ -3,9 +3,33 @@ import CryptoKit
 
 @available(macOS 10.15, *)
 public struct SeedPhrase: SeedPhraseProtocol {
-    static func rawRepresentation(from: Phrase) -> Data? {
+    static func rawRepresentation(from phrase: Phrase) throws -> Data? {
+        var resBits = BitArray()
         
-        return nil
+        for word in phrase {
+            if let wordIndex = bip39.firstIndex(of: word) {
+                var binWordIndex = String(wordIndex, radix: 2)
+                for _ in 0..<(11 - binWordIndex.count) {
+                    binWordIndex = "0" + binWordIndex
+                }
+                resBits += binWordIndex.map { char in
+                    return char == "0" ? .zero : .one
+                }
+            } else {
+                throw SeedPhraseError.invalidWord
+            }
+        }
+        
+        let entropy: BitArray = Array(resBits[0..<256])
+        var entropyBytes = [Byte]()
+        
+        for i in stride(from: 0, to: entropy.count, by: 8) {
+            entropyBytes.append(Byte(bin2dec(Array(entropy[i..<(i + 8)]))))
+        }
+        
+        let entropyData = Data(bytes: entropyBytes, count: entropyBytes.count)
+        
+        return entropyData
     }
     
     static func derive(from data: Data?) throws -> Phrase {
@@ -15,7 +39,8 @@ public struct SeedPhrase: SeedPhraseProtocol {
         }
         
         // Convert key to bits
-        var keyBits = [Bit]()
+        var keyBits = BitArray()
+        
         for byte in data.bytes {
             keyBits += byte.bits
         }
@@ -24,7 +49,7 @@ public struct SeedPhrase: SeedPhraseProtocol {
         var hash = SHA256()
         hash.update(data: data)
         let checksumData: Data = withUnsafeBytes(of: hash.finalize().hashValue) { Data($0) }
-        var checksumBits = [Bit]()
+        var checksumBits = BitArray()
         
         for byte in checksumData.bytes {
             checksumBits += byte.bits
