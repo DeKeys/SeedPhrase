@@ -11,13 +11,9 @@ import XCTest
 
 final class FunctionsTests: XCTestCase {
     func testConvertbin2dec() {
-        let oneBits: [Bit] = [.zero, .zero, .one]
-        let twoBits: [Bit] = [.one, .zero]
-        let nullBits: [Bit] = []
-        let maxBits = [Bit](repeating: .one, count: 11)
-        XCTAssertEqual(bin2dec(oneBits), 1)
-        XCTAssertEqual(bin2dec(twoBits), 2)
-        XCTAssertEqual(bin2dec(nullBits), 0)
-        XCTAssertEqual(bin2dec(maxBits), 2047)
+        XCTAssertEqual(bin2dec([.one]), 1)
+        XCTAssertEqual(bin2dec([.one, .zero]), 2)
+        XCTAssertEqual(bin2dec([]), 0)
+        XCTAssertEqual(bin2dec([Bit](repeating: .one, count: 11)), 2047)
     }
 }
