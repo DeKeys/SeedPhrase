@@ -10,6 +10,47 @@ import Foundation
 typealias Byte = UInt8
 typealias ByteArray = [Byte]
 
+extension ByteArray {
+    init(from bits: BitArray) throws {
+        if bits.count % 8 != 0 {
+            throw ByteArrayError.invalidLength
+        }
+        
+        var res = ByteArray()
+        
+        for i in stride(from: 0, to: bits.count, by: 8) {
+            res.append(Byte(bin2dec(BitArray(bits[i..<(i + 8)]))))
+        }
+        
+        self.init(res)
+    }
+}
+
+extension BitArray {
+    init(from: String?, length: Int = 0) {
+        guard let from = from else {
+            self.init()
+            return
+        }
+        var res = BitArray()
+        
+        if length - from.count > 0 {
+            for _ in 0..<(length - from.count) {
+                res.append(.zero)
+            }
+        }
+        
+        res += from.map { char in
+            return char == "0" ? .zero : .one
+        }
+        self.init(res)
+    }
+    
+    init(from data: ByteArray) {
+        self.init(data.map { $0.bits }.flatMap { $0 })
+    }
+}
+
 // https://gist.github.com/pofat/6ae0c2626660741234f159c60f51af91
 extension Data {
     var bytes: [Byte] {
@@ -23,6 +64,7 @@ extension Byte {
     var bits: BitArray {
         let bitsOfAbyte = 8
         var bitsArray = BitArray(repeating: Bit.zero, count: bitsOfAbyte)
+        
         for (index, _) in bitsArray.enumerated() {
             // Bitwise shift to clear unrelevant bits
             let bitVal: UInt8 = 1 << UInt8(bitsOfAbyte - 1 - index)
@@ -32,6 +74,7 @@ extension Byte {
                 bitsArray[index] = Bit.one
             }
         }
+        
         return bitsArray
     }
 }
