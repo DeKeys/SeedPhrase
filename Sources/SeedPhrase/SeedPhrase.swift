@@ -1,8 +1,13 @@
 import Foundation
 import CryptoKit
 
-@available(macOS 10.15, *)
+@available(macOS 10.15, iOS 13, *)
 public struct SeedPhrase: SeedPhraseProtocol {
+    /// This function returns the entropy from the mnemonic seed phrase
+    ///
+    /// - Parameter phrase: array of words representing mnemonic
+    /// - Throws: throws an error if any word can't be found in bip39 wordlist or if checksum is invalid
+    /// - Returns: entropy in Data format
     static func rawRepresentation(from phrase: Phrase) throws -> Data? {
         var resBits = BitArray()
         
@@ -33,6 +38,11 @@ public struct SeedPhrase: SeedPhraseProtocol {
         return entropyData
     }
     
+    /// This function creates a mnemonic seed phrase from given data
+    ///
+    /// - Parameter data: data from which to create a mnemonic (length in bits should be divisible by 32)
+    /// - Throws: invalid length of data
+    /// - Returns: array of words representing a mnemonic
     static func derive(from data: Data?) throws -> Phrase {
         guard let data = data else { return [] }
         if (data.count * 8) % 32 != 0 {

@@ -7,7 +7,11 @@
 
 import Foundation
 
-func bin2dec(_ bits: [Bit]) -> Int {
+/// This functions converts number from binary format to decimal
+///
+///  - Parameter bits: array of bits representing a number in binary format
+///  - Returns: decimal number
+func bin2dec(_ bits: BitArray) -> Int {
     var res = 0
     let N = bits.count - 1
     
