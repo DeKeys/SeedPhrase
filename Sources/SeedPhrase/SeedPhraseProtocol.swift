@@ -7,8 +7,6 @@
 
 import Foundation
 
-typealias Phrase = [String]
-
 protocol SeedPhraseProtocol {
     static func derive(from data: Data?) throws -> Phrase
     static func rawRepresentation(from phrase: Phrase) throws -> Data?

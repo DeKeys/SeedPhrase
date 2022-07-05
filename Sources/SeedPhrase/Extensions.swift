@@ -7,9 +7,6 @@
 
 import Foundation
 
-typealias Byte = UInt8
-typealias ByteArray = [Byte]
-
 extension ByteArray {
     init(from bits: BitArray) throws {
         if bits.count % 8 != 0 {
@@ -27,20 +24,20 @@ extension ByteArray {
 }
 
 extension BitArray {
-    init(from: String?, length: Int = 0) {
-        guard let from = from else {
+    init(from string: String?, length: Int = 0) {
+        guard let string = string else {
             self.init()
             return
         }
         var res = BitArray()
         
-        if length - from.count > 0 {
-            for _ in 0..<(length - from.count) {
+        if length - string.count > 0 {
+            for _ in 0..<(length - string.count) {
                 res.append(.zero)
             }
         }
         
-        res += from.map { char in
+        res += string.map { char in
             return char == "0" ? .zero : .one
         }
         self.init(res)
