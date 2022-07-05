@@ -1,3 +1,2 @@
 # SeedPhrase
-
-A description of this package.
+> This package helps you to create a mnemonic seed phrase from private keys
